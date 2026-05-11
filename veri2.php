@@ -77,6 +77,7 @@ if ($search !== '') {
     $sql = "
         SELECT
             num_suivi,
+            noms,
             marchandises,
             cbm,
             pt,
@@ -251,7 +252,10 @@ function getEtatClass($etat)
                 <?php foreach ($colis as $c): ?>
 
                     <div class="colis-card <?php echo getEtatClass($c['etatcolis']); ?>">
-
+                        <div>
+                            <b>Nom sur le colis :</b>
+                            <?php echo htmlspecialchars($c['noms']); ?>
+                        </div>
                         <div>
                             <b>Suivi :</b>
                             <?php echo htmlspecialchars($c['num_suivi']); ?>
