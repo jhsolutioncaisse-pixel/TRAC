@@ -21,12 +21,12 @@ $colis = [];
 
 if ($search !== '') {
 
-    $stmt = $conn->prepare("
-        SELECT num_suivi, marchandises, cbm, pt, etatcolis, conteneur, date_arrivee
-        FROM import_excel
-        WHERE (noms LIKE ? OR num_suivi LIKE ? OR telephone LIKE ?)
-        ORDER BY created_at ASC
-    ");
+ $stmt = $conn->prepare("
+    SELECT num_suivi, marchandises, cbm, pt, etatcolis, conteneur, date_arrivee
+    FROM import_excel
+    WHERE (noms LIKE ? OR num_suivi LIKE ? OR telephone LIKE ?)
+    ORDER BY created_at DESC
+");
 
     if ($stmt) {
 
