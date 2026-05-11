@@ -67,7 +67,7 @@
 
     <br>
 
-    <a href="index.php" class="btn btn-primary btn-connect">
+    <a href="VERIFI_maritime.html" class="btn btn-primary btn-connect">
         <i class="bi bi-box-arrow-in-right"></i>
         Cliquer ici
     </a>
