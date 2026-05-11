@@ -52,7 +52,7 @@ self.addEventListener("fetch", event => {
       }).catch(() => {
         // Fallback offline pour page HTML
         if (event.request.destination === "document") {
-          return caches.match("index.html");
+          return caches.match("index.php");
         }
       });
     })
