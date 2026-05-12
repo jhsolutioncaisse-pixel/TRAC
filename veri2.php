@@ -84,7 +84,8 @@ if ($search !== '') {
             etatcolis,
             conteneur,
             date_arrivee,
-            qte
+            qte,
+            datekinshasa
         FROM import_excel
         WHERE (
             noms LIKE ?
@@ -289,6 +290,10 @@ function getEtatClass($etat)
                         <div>
                             <b>État :</b>
                             <?php echo htmlspecialchars($c['etatcolis']); ?>
+                        </div>
+                         <div>
+                            <b>État :</b>
+                            <?php echo htmlspecialchars($c['datekinshasa']); ?>
                         </div>
                          <div>
                             <b>Nombre de colis :</b>
