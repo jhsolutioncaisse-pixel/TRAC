@@ -292,7 +292,7 @@ function getEtatClass($etat)
                             <?php echo htmlspecialchars($c['etatcolis']); ?>
                         </div>
                          <div>
-                            <b>État :</b>
+                            <b>date arrivée à kin :</b>
                             <?php echo htmlspecialchars($c['datekinshasa']); ?>
                         </div>
                          <div>
