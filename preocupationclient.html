@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nous écrire | JH Solution Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+
+        body{
+            background:#f8f9fa;
+            font-family:system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+        }
+
+        /* NAVBAR */
+        .navbar{
+            background:#0d6efd;
+        }
+
+        .back-btn{
+            width:42px;
+            height:42px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.2rem;
+        }
+
+        /* FORMULAIRE */
+        .form-container{
+            max-width:650px;
+            margin:auto;
+        }
+
+        .card{
+            border:none;
+            border-radius:20px;
+            box-shadow:0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .icon-top{
+            font-size:4rem;
+            color:#0d6efd;
+        }
+
+        textarea{
+            resize:none;
+        }
+
+        /* BOUTON WHATSAPP */
+        .btn-whatsapp{
+            background:#25D366;
+            color:white;
+            border:none;
+            border-radius:30px;
+            padding:12px;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .btn-whatsapp:hover{
+            background:#1ebe5d;
+            color:white;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+
+    <div class="container">
+
+        <div class="d-flex align-items-center">
+
+            <!-- BOUTON RETOUR -->
+            <a href="ACCEUIL.HTML"
+               class="btn btn-light back-btn me-3">
+
+                <i class="bi bi-arrow-left"></i>
+
+            </a>
+
+            <!-- TITRE -->
+            <a class="navbar-brand fw-bold m-0" href="index.html">
+
+                <i class="bi bi-phone"></i>
+                JH-TRACK
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- CONTENU -->
+<div class="container py-5">
+
+    <div class="form-container">
+
+        <div class="card p-4 p-md-5">
+
+            <!-- ICONE -->
+            <div class="text-center mb-4">
+
+                <div class="icon-top mb-3">
+
+                    <i class="bi bi-chat-dots-fill"></i>
+
+                </div>
+
+                <h2 class="fw-bold">
+                    Nous écrire
+                </h2>
+
+                <p class="text-muted">
+
+                    Envoyez votre préoccupation directement via WhatsApp.
+
+                </p>
+
+            </div>
+
+            <!-- FORMULAIRE -->
+            <form id="whatsappForm">
+
+                <!-- MOTIF -->
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+
+                        Motif de la préoccupation
+
+                    </label>
+
+                    <input type="text"
+                           class="form-control form-control-lg"
+                           id="motif"
+                           placeholder="Ex : Retard colis"
+                           required>
+
+                </div>
+
+                <!-- MESSAGE -->
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+
+                        Votre préoccupation
+
+                    </label>
+
+                    <textarea class="form-control form-control-lg"
+                              id="message"
+                              rows="6"
+                              placeholder="Décrivez votre problème..."
+                              required></textarea>
+
+                </div>
+
+                <!-- BOUTON -->
+                <div class="d-grid">
+
+                    <button type="submit"
+                            class="btn btn-whatsapp btn-lg">
+
+                        <i class="bi bi-whatsapp"></i>
+                        Envoyer via WhatsApp
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- BOOTSTRAP JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- SCRIPT WHATSAPP -->
+<script>
+
+document.getElementById("whatsappForm")
+.addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    // RECUPERATION DES VALEURS
+    let motif = document.getElementById("motif").value;
+    let message = document.getElementById("message").value;
+
+    // NUMERO WHATSAPP
+    let numero = "243896858480";
+
+    // MESSAGE FORMATÉ
+    let texte =
+`Bonjour JH Solution Mobile,
+
+📌 Motif : ${motif}
+
+📝 Préoccupation :
+${message}`;
+
+    // CREATION URL
+    let url =
+    "https://wa.me/" +
+    numero +
+    "?text=" +
+    encodeURIComponent(texte);
+
+    // OUVERTURE WHATSAPP
+    window.open(url, "_blank");
+
+});
+
+</script>
+
+</body>
+</html>
