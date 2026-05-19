@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Compte | JH - TRACK</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<style>
+
+:root{
+    --primary:#0d6efd;
+    --dark:#0b1220;
+    --light:#f4f7fb;
+}
+
+body{
+    background:linear-gradient(135deg,#eef4ff,#f8fbff);
+    font-family:system-ui;
+    min-height:100vh;
+}
+
+.navbar{
+    background:rgba(13,110,253,.95);
+    backdrop-filter:blur(10px);
+}
+
+.hero-zone{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:100px;
+    padding-bottom:50px;
+}
+
+.login-card{
+
+    background:#fff;
+
+    border:none;
+
+    border-radius:28px;
+
+    padding:40px;
+
+    box-shadow:
+    0 15px 40px rgba(13,110,253,.12),
+    0 3px 10px rgba(0,0,0,.05);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.login-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-80px;
+    right:-80px;
+
+    width:180px;
+    height:180px;
+
+    background:rgba(13,110,253,.08);
+
+    border-radius:50%;
+}
+
+.logo-box{
+
+    width:90px;
+    height:90px;
+
+    background:linear-gradient(135deg,#0d6efd,#3d8bfd);
+
+    border-radius:25px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:auto;
+
+    color:white;
+
+    font-size:40px;
+
+    box-shadow:0 10px 30px rgba(13,110,253,.25);
+}
+
+.form-control{
+
+    border-radius:16px;
+
+    min-height:55px;
+
+    border:1px solid #dbe4f0;
+}
+
+.form-control:focus{
+
+    box-shadow:0 0 0 .25rem rgba(13,110,253,.15);
+}
+
+.input-group .btn{
+
+    border-radius:16px;
+}
+
+.btn-primary{
+
+    min-height:55px;
+
+    border-radius:18px;
+
+    font-weight:600;
+
+    letter-spacing:.3px;
+
+    box-shadow:0 10px 25px rgba(13,110,253,.25);
+}
+
+.btn-search{
+
+    width:60px;
+}
+
+.title-main{
+    font-weight:800;
+    color:var(--dark);
+}
+
+.subtitle{
+    color:#6c757d;
+}
+
+.info-box{
+
+    background:#f8fbff;
+
+    border:1px solid #e4eefc;
+
+    border-radius:18px;
+
+    padding:18px;
+}
+
+.info-icon{
+
+    width:50px;
+    height:50px;
+
+    border-radius:15px;
+
+    background:rgba(13,110,253,.1);
+
+    color:var(--primary);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:22px;
+}
+
+footer{
+
+    text-align:center;
+
+    padding:20px;
+
+    color:#6c757d;
+
+    font-size:.9rem;
+}
+
+.animate-card{
+    animation:fadeUp .8s ease;
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm">
+
+<div class="container">
+
+<a class="navbar-brand fw-bold" href="#">
+
+<i class="bi bi-box-seam"></i>
+
+JH - TRACK
+
+</a>
+
+<div>
+
+<a href="compte.html" class="btn btn-light rounded-pill px-4">
+
+<i class="bi bi-arrow-left"></i>
+
+Retour vers login
+
+</a>
+
+</div>
+
+</div>
+
+</nav>
+
+<!-- MAIN -->
+
+<section class="hero-zone">
+
+<div class="container">
+
+<div class="row justify-content-center align-items-center">
+
+<div class="col-lg-7 col-xl-6">
+
+<div class="login-card animate-card">
+
+<div class="text-center mb-4">
+
+<div class="logo-box mb-4">
+
+<i class="bi bi-person-gear"></i>
+
+</div>
+
+<h2 class="title-main">
+
+Gestion du compte
+
+</h2>
+
+<p class="subtitle">
+
+Créer ou modifier son compte client.
+
+</p>
+
+</div>
+
+<div id="msgBox" class="alert d-none text-center rounded-4"></div>
+
+<!-- RECHERCHE -->
+
+<div class="info-box mb-4">
+
+<div class="d-flex align-items-center gap-3 mb-3">
+
+<div class="info-icon">
+
+<i class="bi bi-search"></i>
+
+</div>
+
+<div>
+
+<h6 class="fw-bold mb-0">
+
+Recherche rapide
+
+</h6>
+
+<small class="text-muted">
+
+Recherche votre compte via son numéro téléphone pour une moditifaction
+
+</small>
+
+</div>
+
+</div>
+
+<div class="input-group">
+
+<input type="tel"
+       id="searchPhone"
+       class="form-control"
+       placeholder="0970000000">
+
+<button class="btn btn-outline-primary btn-search"
+        onclick="searchClient()">
+
+<i class="bi bi-search"></i>
+
+</button>
+
+</div>
+
+</div>
+
+<!-- FORM -->
+
+<form id="compteForm">
+
+<input type="hidden"
+       name="codeclient"
+       id="codeclient">
+
+<div class="mb-3">
+
+<label class="form-label fw-semibold">
+
+<i class="bi bi-person"></i>
+
+Nom que vous mettez sur le colis
+
+</label>
+
+<input type="text"
+       name="Nomclient"
+       id="Nomclient"
+       class="form-control"
+       placeholder="Ex : ir Nzobazola"
+       required>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label fw-semibold">
+
+<i class="bi bi-telephone"></i>
+
+Téléphone que vous mettez sur le colis
+
+</label>
+
+<input type="tel"
+       name="telephone"
+       id="telephone"
+       class="form-control"
+       placeholder="0970000000"
+       required>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label fw-semibold">
+
+<i class="bi bi-envelope"></i>
+
+Adresse mail
+
+</label>
+
+<input type="email"
+       name="mail"
+       id="mail"
+       class="form-control"
+       placeholder="client@gmail.com"
+       required>
+
+</div>
+
+<div class="mb-4">
+
+<label class="form-label fw-semibold">
+
+<i class="bi bi-lock"></i>
+
+Mot de passe
+
+</label>
+
+<div class="input-group">
+
+<input type="password"
+       name="accesclient"
+       id="accesclient"
+       class="form-control"
+       placeholder="********"
+       required>
+
+<button class="btn btn-outline-secondary"
+        type="button"
+        onclick="togglePassword()">
+
+<i id="eyeIcon" class="bi bi-eye"></i>
+
+</button>
+
+</div>
+
+</div>
+
+<div class="d-grid">
+
+<button type="submit"
+        class="btn btn-primary btn-lg">
+
+<i class="bi bi-save"></i>
+
+Enregistrer / Modifier
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+Nzobazola — IT Consulting 4.0
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+const msgBox = document.getElementById("msgBox");
+
+/* ===========================
+   ENREGISTRER
+=========================== */
+
+document
+.getElementById("compteForm")
+.addEventListener("submit", e => {
+
+    e.preventDefault();
+
+    // DATE AUTO AJOUTÉE
+    const date_creation = new Date().toISOString().slice(0,19).replace("T"," ");
+
+    fetch("compte.php", {
+        method: "POST",
+        body: new URLSearchParams({
+            codeclient: document.getElementById("codeclient").value,
+            Nomclient: document.getElementById("Nomclient").value,
+            telephone: document.getElementById("telephone").value,
+            mail: document.getElementById("mail").value,
+            accesclient: document.getElementById("accesclient").value,
+            date_creation: date_creation   // ✅ AJOUT IMPORTANT
+        })
+    })
+
+    .then(r => r.json())
+    .then(d => {
+
+        if(d.error){
+
+            msgBox.className =
+            "alert alert-danger text-center rounded-4";
+
+            msgBox.textContent = d.error;
+
+            msgBox.classList.remove("d-none");
+
+            return;
+        }
+
+        msgBox.className =
+        "alert alert-success text-center rounded-4";
+
+        msgBox.innerHTML = `
+            <i class="bi bi-check-circle-fill"></i>
+            ${d.message}
+        `;
+
+        msgBox.classList.remove("d-none");
+
+        e.target.reset();
+
+        document.getElementById("codeclient").value = "";
+
+    })
+
+    .catch(() => {
+
+        msgBox.className =
+        "alert alert-danger text-center rounded-4";
+
+        msgBox.textContent =
+        "Erreur serveur";
+
+        msgBox.classList.remove("d-none");
+
+    });
+
+});
+
+
+/* ===========================
+   RECHERCHE (FIXÉ)
+=========================== */
+
+function searchClient(){
+
+    const tel = document.getElementById("searchPhone").value;
+
+    fetch("compte.php?telephone=" + tel)
+
+    .then(r => r.json())
+
+    .then(d => {
+
+        console.log(d);
+
+        if(!d.found){
+
+            msgBox.className =
+            "alert alert-warning text-center rounded-4";
+
+            msgBox.innerHTML = `
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Client non trouvé
+            `;
+
+            msgBox.classList.remove("d-none");
+
+            return;
+        }
+
+        document.getElementById("codeclient").value =
+        d.data.codeclient;
+
+        document.getElementById("Nomclient").value =
+        d.data.Nomclient;
+
+        document.getElementById("telephone").value =
+        d.data.telephone;
+
+        document.getElementById("mail").value =
+        d.data.mail;
+
+        document.getElementById("accesclient").value =
+        d.data.accesclient;
+
+        msgBox.className =
+        "alert alert-info text-center rounded-4";
+
+        msgBox.innerHTML = `
+            <i class="bi bi-person-check-fill"></i>
+            Client trouvé avec succès
+        `;
+
+        msgBox.classList.remove("d-none");
+
+    })
+
+    .catch(err => {
+
+        console.log(err);
+
+        msgBox.className =
+        "alert alert-danger text-center rounded-4";
+
+        msgBox.innerHTML = `
+            Erreur lors de la recherche
+        `;
+
+        msgBox.classList.remove("d-none");
+
+    });
+}
+
+
+/* ===========================
+   PASSWORD
+=========================== */
+
+function togglePassword(){
+
+    const pwd =
+    document.getElementById("accesclient");
+
+    const eye =
+    document.getElementById("eyeIcon");
+
+    if(pwd.type === "password"){
+
+        pwd.type = "text";
+
+        eye.className = "bi bi-eye-slash";
+
+    } else {
+
+        pwd.type = "password";
+
+        eye.className = "bi bi-eye";
+
+    }
+}
+
+</script>
+</body>
+
+</html>
