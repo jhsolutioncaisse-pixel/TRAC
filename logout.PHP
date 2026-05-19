@@ -27,6 +27,6 @@ session_unset();
 session_destroy();
 
 /* redirection */
-header("Location: ACCEUIL.HTML");
+header("Location: accueil.html");
 exit;
 ?>
