@@ -281,7 +281,7 @@ Déconnexion
 <div class="col-lg-8">
 
 <h2 class="fw-bold mb-2">
-Bienvenue <?= htmlspecialchars($Nomclient) ?> ici l'affichage d'un colis est beaucoup plus liée à votre numéro de téléphone.
+Bienvenue ( <?= htmlspecialchars($Nomclient) ?> )  ici l'affichage d'un colis est beaucoup plus liée à votre numéro de téléphone.
 </h2>
 
 <p class="text-muted mb-0">
@@ -295,7 +295,7 @@ Si un colis ne s'affiche pas ici, veuillez aller verifier vers l'onglet consulte
 <div class="d-inline-block bg-primary text-white rounded-4 px-4 py-3">
 
 <div class="small">
-TOTAL COLIS
+COLIS TROUVES
 </div>
 
 <div class="fs-3 fw-bold">
@@ -372,6 +372,19 @@ COLIS
 
 <div class="p-4">
 
+<div class="info-line">
+<div class="label">
+<i class="bi bi-box"></i>
+Noms sur le colis
+</div>
+
+<div class="value">
+<?= htmlspecialchars($c['noms']) ?>
+</div>
+</div>
+
+
+   
 <div class="info-line">
 <div class="label">
 <i class="bi bi-box"></i>
