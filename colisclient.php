@@ -281,7 +281,7 @@ Déconnexion
 <div class="col-lg-8">
 
 <h2 class="fw-bold mb-2">
-Bienvenue ( <?= htmlspecialchars($Nomclient) ?> )  ici l'affichage d'un colis est beaucoup plus liée à votre numéro de téléphone.
+Bienvenue ( <?= htmlspecialchars($Nomclient) ?> )!  Ici l'affichage d'un colis est beaucoup plus liée à votre numéro de téléphone.
 </h2>
 
 <p class="text-muted mb-0">
