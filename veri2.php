@@ -1,10 +1,10 @@
 <?php
 // ========================= CONNEXION BASE CLEVERCLOUD =========================
-$host    = "bmxwrvykt5gv0y88jvj3-mysql.services.clever-cloud.com";
-$dbname  = "bmxwrvykt5gv0y88jvj3";
+$host    = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
+$dbname  = "b9xd1ca5virznhlmzgmt";
 $user    = "usm9pm3hnlnhmoee";
 $pass    = "5un1mBwofPvYnS36hOLi";
-$port    = 3306;
+$port    = 20856;
 
 $conn = new mysqli($host, $user, $pass, $dbname, $port);
 
