@@ -4,11 +4,11 @@
 // CONNEXION BASE DE DONNEES - CLEVER CLOUD
 // =========================================================
 
- $host=b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com
-$dbname=b9xd1ca5virznhlmzgmt
-$user=usm9pm3hnlnhmoee
-$pass=5un1mBwofPvYnS36hOLi
-$port=20856 
+$host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
+$dbname = "b9xd1ca5virznhlmzgmt";
+$user   = "usm9pm3hnlnhmoee";
+$pass   = "5un1mBwofPvYnS36hOLi";
+$port   = 20856;
 
 $conn = new mysqli(
     $host,
