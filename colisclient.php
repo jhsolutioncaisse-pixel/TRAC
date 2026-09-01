@@ -1,11 +1,3 @@
-/* =====================================================
-    $pdo = new PDO(
-        "mysql:host=bmxwrvykt5gv0y88jvj3-mysql.services.clever-cloud.com;
-        dbname=bmxwrvykt5gv0y88jvj3;
-        charset=utf8",
-        "usm9pm3hnlnhmoee",
-        "5un1mBwofPvYnS36hOLi",
-  ===================================================== */   
 <?php
 
 session_start();
@@ -28,11 +20,11 @@ if (!isset($_SESSION['codeclient'])) {
    ON NE CHANGE PAS CETTE BASE
 ===================================================== */
 
-$host   = "bmxwrvykt5gv0y88jvj3-mysql.services.clever-cloud.com";
-$dbname = "bmxwrvykt5gv0y88jvj3";
+$host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
+$dbname = "b9xd1ca5virznhlmzgmt";
 $user   = "usm9pm3hnlnhmoee";
-$pass   = "5un1mBwofPvYnS36hOLi",";
-$port   = 3306;
+$pass   = "5un1mBwofPvYnS36hOLi";
+$port   = 20856;
 
 
 try {
