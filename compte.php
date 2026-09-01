@@ -1,17 +1,8 @@
-
 <?php
 
 declare(strict_types=1);
 
-/*
-=========================================================
- API CLIENT
- Connexion MySQL Clever Cloud
-=========================================================
-*/
-
 header('Content-Type: application/json; charset=utf-8');
-
 
 /* =====================================================
    CONFIGURATION MYSQL
@@ -35,9 +26,9 @@ try {
         $user,
         $pass,
         [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false
+            PDO::ATTR_EMULATE_PREPARES => false
         ]
     );
 
@@ -64,7 +55,6 @@ if (
 
     $telephone = trim((string) $_GET["telephone"]);
 
-
     if ($telephone === "") {
 
         echo json_encode([
@@ -74,7 +64,6 @@ if (
 
         exit;
     }
-
 
     try {
 
@@ -97,7 +86,6 @@ if (
         ]);
 
         $client = $req->fetch();
-
 
         if ($client) {
 
@@ -138,17 +126,11 @@ if (
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-
-    /* =================================================
-       RECUPERATION DES DONNEES
-    ================================================= */
-
     $codeclient = trim((string) ($_POST["codeclient"] ?? ""));
     $Nomclient = trim((string) ($_POST["Nomclient"] ?? ""));
     $telephone = trim((string) ($_POST["telephone"] ?? ""));
     $mail = trim((string) ($_POST["mail"] ?? ""));
     $accesclient = trim((string) ($_POST["accesclient"] ?? ""));
-
 
     /* =================================================
        VALIDATION
@@ -168,17 +150,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-
     try {
-
 
         /* =============================================
            MODIFICATION
         ============================================= */
 
         if ($codeclient !== "") {
-
-            /* Vérifier que le client existe */
 
             $check = $pdo->prepare("
                 SELECT codeclient
@@ -201,8 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
 
 
-            /* Vérifier si le téléphone appartient
-               à un autre client */
+            /* Vérifier téléphone doublon */
 
             $checkTelephone = $pdo->prepare("
                 SELECT codeclient
@@ -231,12 +208,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $sql = "
                 UPDATE client SET
-
                     Nomclient = ?,
                     telephone = ?,
                     mail = ?,
                     accesclient = ?
-
                 WHERE codeclient = ?
             ";
 
@@ -250,7 +225,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $codeclient
             ]);
 
-
             echo json_encode([
                 "success" => true,
                 "message" => "Compte modifié avec succès",
@@ -262,11 +236,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
         /* =============================================
-           CREATION D'UN NOUVEAU CLIENT
+           CREATION
         ============================================= */
-
-
-        /* Vérifier si le téléphone existe déjà */
 
         $check = $pdo->prepare("
             SELECT codeclient
@@ -310,11 +281,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $accesclient
         ]);
 
-
-        /* Récupérer le code client généré */
-
         $nouveauCodeClient = $pdo->lastInsertId();
-
 
         echo json_encode([
             "success" => true,
@@ -323,7 +290,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ], JSON_UNESCAPED_UNICODE);
 
         exit;
-
 
     } catch (PDOException $e) {
 
@@ -351,3 +317,6 @@ echo json_encode([
 exit;
 
 ?>
+
+
+    
