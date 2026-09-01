@@ -76,7 +76,7 @@ $where = "
 ========================= */
 $count = $pdo->prepare("
     SELECT COUNT(*)
-    FROM import_excel
+    FROM import_excel2
     WHERE $where
 ");
 
