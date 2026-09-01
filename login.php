@@ -1,4 +1,4 @@
-```php
+
 <?php
 
 declare(strict_types=1);
@@ -357,4 +357,4 @@ window.location.href = 'colisclient.php';
 exit;
 
 ?>
-```
+
