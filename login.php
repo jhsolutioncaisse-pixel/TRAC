@@ -1,17 +1,10 @@
-
 <?php
-
-declare(strict_types=1);
-
 session_start();
-
 header('Content-Type: text/html; charset=utf-8');
-
-
 /* =====================================================
-   CONFIGURATION MYSQL - NOUVELLE BASE
+   CONFIGURATION MYSQL
+   NOUVELLE BASE CLEVER CLOUD
 ===================================================== */
-
 $host   = "bi4znbakulhrwepehasb-mysql.services.clever-cloud.com";
 $dbname = "bi4znbakulhrwepehasb";
 $user   = "urwpvypsyyfz8vr9";
@@ -33,7 +26,7 @@ try {
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
-            PDO::ATTR_TIMEOUT             => 10
+            PDO::ATTR_TIMEOUT            => 10
         ]
     );
 
@@ -41,70 +34,13 @@ try {
 
     http_response_code(500);
 
-    die("
-        <!DOCTYPE html>
-        <html lang='fr'>
-        <head>
-            <meta charset='UTF-8'>
-            <meta name='viewport' content='width=device-width, initial-scale=1'>
-            <title>Erreur</title>
-
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background: #f5f7fa;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    min-height: 100vh;
-                    margin: 0;
-                }
-
-                .box {
-                    background: white;
-                    padding: 30px;
-                    border-radius: 15px;
-                    max-width: 500px;
-                    width: 90%;
-                    text-align: center;
-                    box-shadow: 0 10px 30px rgba(0,0,0,.10);
-                }
-
-                h2 {
-                    color: #dc3545;
-                }
-
-                p {
-                    color: #666;
-                }
-            </style>
-        </head>
-
-        <body>
-
-            <div class='box'>
-
-                <h2>Erreur de connexion</h2>
-
-                <p>
-                    Impossible de se connecter à la base de données.
-                </p>
-
-                <p>
-                    Veuillez réessayer plus tard.
-                </p>
-
-            </div>
-
-        </body>
-        </html>
-    ");
+    die("Erreur de connexion à la base de données.");
 
 }
 
 
 /* =====================================================
-   VERIFICATION DE LA METHODE
+   VERIFICATION DE LA REQUETE
 ===================================================== */
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -117,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
 
 /* =====================================================
-   RECUPERATION DU FORMULAIRE
+   RECUPERATION DES DONNEES DU FORMULAIRE
 ===================================================== */
 
 $mail = trim($_POST["mail"] ?? "");
@@ -132,10 +68,10 @@ $password = trim($_POST["accesclient"] ?? "");
 if ($mail === "" || $password === "") {
 
     echo "
-        <script>
-            alert('Veuillez remplir tous les champs.');
-            history.back();
-        </script>
+    <script>
+        alert('Veuillez remplir tous les champs.');
+        history.back();
+    </script>
     ";
 
     exit;
@@ -190,10 +126,10 @@ try {
 if (!$client) {
 
     echo "
-        <script>
-            alert('Utilisateur introuvable.');
-            history.back();
-        </script>
+    <script>
+        alert('Utilisateur introuvable.');
+        history.back();
+    </script>
     ";
 
     exit;
@@ -207,10 +143,10 @@ if (!$client) {
 if ($password !== $client["accesclient"]) {
 
     echo "
-        <script>
-            alert('Mot de passe incorrect.');
-            history.back();
-        </script>
+    <script>
+        alert('Mot de passe incorrect.');
+        history.back();
+    </script>
     ";
 
     exit;
@@ -222,7 +158,7 @@ if ($password !== $client["accesclient"]) {
 ===================================================== */
 
 /*
-   On régénère l'identifiant de session
+   Régénération de l'identifiant de session
    pour sécuriser la connexion.
 */
 
@@ -266,15 +202,15 @@ try {
 } catch (PDOException $e) {
 
     /*
-       Même si la mise à jour de cnx échoue,
-       la session client reste valide.
+       Si la mise à jour de cnx échoue,
+       la connexion du client continue.
     */
 
 }
 
 
 /* =====================================================
-   PREPARATION DES DONNEES POUR LOCAL STORAGE
+   PREPARATION LOCAL STORAGE
 ===================================================== */
 
 $nom = json_encode(
@@ -315,11 +251,10 @@ $accesclient = json_encode(
 
 
 /* =====================================================
-   LOCAL STORAGE
+   LOCAL STORAGE + REDIRECTION
 ===================================================== */
 
 echo "
-
 <script>
 
 localStorage.setItem(
@@ -350,11 +285,8 @@ localStorage.setItem(
 window.location.href = 'colisclient.php';
 
 </script>
-
 ";
-
 
 exit;
 
 ?>
-
