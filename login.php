@@ -1,18 +1,23 @@
 <?php
 session_start();
 
-$pdo = new PDO(
-    "mysql:host=bi4znbakulhrwepehasb-mysql.services.clever-cloud.com;
-    dbname=bi4znbakulhrwepehasb;
-    port=3306;
-    charset=utf8",
-    "urwpvypsyyfz8vr9",
-    "kqGARbb1nVjSCCe28Blc",
-    [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-    ]
+$host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
+$dbname = "b9xd1ca5virznhlmzgmt";
+$user   = "usm9pm3hnlnhmoee";
+$pass   = "5un1mBwofPvYnS36hOLi";
+$port   = 20856;
+
+$conn = new mysqli(
+    $host,
+    $user,
+    $pass,
+    $dbname,
+    $port
 );
+
+if ($conn->connect_error) {
+    die("Erreur de connexion à la base de données.");
+}
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
