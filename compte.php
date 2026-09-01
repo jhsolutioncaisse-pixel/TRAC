@@ -6,8 +6,8 @@ try {
 
      $pdo = new PDO(
         "mysql:host=bi4znbakulhrwepehasb-mysql.services.clever-cloud.com;dbname=b9xd1ca5virznhlmzgmt;port=20856;charset=utf8",
-        "usm9pm3hnlnhmoee",
-        "5un1mBwofPvYnS36hOLi"
+        "5un1mBwofPvYnS36hOLi",
+        "usm9pm3hnlnhmoee"
     );
 
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
