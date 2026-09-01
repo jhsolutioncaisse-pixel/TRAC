@@ -9,7 +9,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 
 /* =====================================================
-   CONFIGURATION MYSQL DIRECTE - CLEVER CLOUD
+   CONFIGURATION MYSQL - NOUVELLE BASE
 ===================================================== */
 
 $host   = "bi4znbakulhrwepehasb-mysql.services.clever-cloud.com";
@@ -33,7 +33,7 @@ try {
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
-            PDO::ATTR_TIMEOUT            => 10
+            PDO::ATTR_TIMEOUT             => 10
         ]
     );
 
@@ -41,12 +41,70 @@ try {
 
     http_response_code(500);
 
-    die("Erreur de connexion à la base de données.");
+    die("
+        <!DOCTYPE html>
+        <html lang='fr'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <title>Erreur</title>
+
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background: #f5f7fa;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    min-height: 100vh;
+                    margin: 0;
+                }
+
+                .box {
+                    background: white;
+                    padding: 30px;
+                    border-radius: 15px;
+                    max-width: 500px;
+                    width: 90%;
+                    text-align: center;
+                    box-shadow: 0 10px 30px rgba(0,0,0,.10);
+                }
+
+                h2 {
+                    color: #dc3545;
+                }
+
+                p {
+                    color: #666;
+                }
+            </style>
+        </head>
+
+        <body>
+
+            <div class='box'>
+
+                <h2>Erreur de connexion</h2>
+
+                <p>
+                    Impossible de se connecter à la base de données.
+                </p>
+
+                <p>
+                    Veuillez réessayer plus tard.
+                </p>
+
+            </div>
+
+        </body>
+        </html>
+    ");
+
 }
 
 
 /* =====================================================
-   VERIFICATION DE LA REQUETE
+   VERIFICATION DE LA METHODE
 ===================================================== */
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -54,11 +112,12 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     http_response_code(405);
 
     die("Requête invalide.");
+
 }
 
 
 /* =====================================================
-   RECUPERATION DES DONNEES
+   RECUPERATION DU FORMULAIRE
 ===================================================== */
 
 $mail = trim($_POST["mail"] ?? "");
@@ -67,18 +126,27 @@ $password = trim($_POST["accesclient"] ?? "");
 
 
 /* =====================================================
-   VALIDATION
+   VERIFICATION DES CHAMPS
 ===================================================== */
 
 if ($mail === "" || $password === "") {
 
-    die("
+    echo "
         <script>
             alert('Veuillez remplir tous les champs.');
             history.back();
         </script>
-    ");
+    ";
+
+    exit;
 }
+
+
+/* =====================================================
+   NETTOYAGE EMAIL
+===================================================== */
+
+$mail = filter_var($mail, FILTER_SANITIZE_EMAIL);
 
 
 /* =====================================================
@@ -100,7 +168,9 @@ try {
         LIMIT 1
     ");
 
-    $stmt->execute([$mail]);
+    $stmt->execute([
+        $mail
+    ]);
 
     $client = $stmt->fetch();
 
@@ -109,6 +179,7 @@ try {
     http_response_code(500);
 
     die("Erreur lors de la recherche du client.");
+
 }
 
 
@@ -118,12 +189,14 @@ try {
 
 if (!$client) {
 
-    die("
+    echo "
         <script>
             alert('Utilisateur introuvable.');
             history.back();
         </script>
-    ");
+    ";
+
+    exit;
 }
 
 
@@ -133,18 +206,25 @@ if (!$client) {
 
 if ($password !== $client["accesclient"]) {
 
-    die("
+    echo "
         <script>
             alert('Mot de passe incorrect.');
             history.back();
         </script>
-    ");
+    ";
+
+    exit;
 }
 
 
 /* =====================================================
    CONNEXION REUSSIE
 ===================================================== */
+
+/*
+   On régénère l'identifiant de session
+   pour sécuriser la connexion.
+*/
 
 session_regenerate_id(true);
 
@@ -153,14 +233,22 @@ session_regenerate_id(true);
    SESSION CLIENT
 ===================================================== */
 
+/*
+   IMPORTANT :
+   Le téléphone est conservé dans la session.
+*/
+
 $_SESSION["codeclient"] = $client["codeclient"];
+
 $_SESSION["Nomclient"] = $client["Nomclient"];
+
 $_SESSION["telephone"] = $client["telephone"];
+
 $_SESSION["mail"] = $client["mail"];
 
 
 /* =====================================================
-   METTRE CNX A 1
+   MISE A JOUR DE CNX
 ===================================================== */
 
 try {
@@ -178,14 +266,15 @@ try {
 } catch (PDOException $e) {
 
     /*
-       La connexion reste valide même si
-       la mise à jour de cnx échoue.
+       Même si la mise à jour de cnx échoue,
+       la session client reste valide.
     */
+
 }
 
 
 /* =====================================================
-   PREPARATION LOCALSTORAGE
+   PREPARATION DES DONNEES POUR LOCAL STORAGE
 ===================================================== */
 
 $nom = json_encode(
@@ -226,18 +315,32 @@ $accesclient = json_encode(
 
 
 /* =====================================================
-   LOCALSTORAGE
+   LOCAL STORAGE
 ===================================================== */
 
-echo "<script>
+echo "
 
-localStorage.setItem('Nomclient', {$nom});
+<script>
 
-localStorage.setItem('telephone', {$telephone});
+localStorage.setItem(
+    'Nomclient',
+    {$nom}
+);
 
-localStorage.setItem('mail', {$mailJS});
+localStorage.setItem(
+    'telephone',
+    {$telephone}
+);
 
-localStorage.setItem('accesclient', {$accesclient});
+localStorage.setItem(
+    'mail',
+    {$mailJS}
+);
+
+localStorage.setItem(
+    'accesclient',
+    {$accesclient}
+);
 
 
 /* =====================================================
@@ -246,7 +349,10 @@ localStorage.setItem('accesclient', {$accesclient});
 
 window.location.href = 'colisclient.php';
 
-</script>";
+</script>
+
+";
+
 
 exit;
 
