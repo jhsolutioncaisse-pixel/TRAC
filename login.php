@@ -1,4 +1,4 @@
-
+```php
 <?php
 
 declare(strict_types=1);
@@ -9,23 +9,14 @@ header('Content-Type: text/html; charset=utf-8');
 
 
 /* =====================================================
-   CONFIGURATION MYSQL - CLEVER CLOUD
+   CONFIGURATION MYSQL DIRECTE - CLEVER CLOUD
 ===================================================== */
 
-/*
-   Clever Cloud fournit normalement ces variables
-   automatiquement à l'application.
-*/
-
-$host = getenv('MYSQL_ADDON_HOST') ?: 'bi4znbakulhrwepehasb-mysql.services.clever-cloud.com';
-
-$dbname = getenv('MYSQL_ADDON_DB') ?: 'bi4znbakulhrwepehasb';
-
-$user = getenv('MYSQL_ADDON_USER') ?: 'urwpvypsyyfz8vr9';
-
-$pass = getenv('MYSQL_ADDON_PASSWORD') ?: 'kqGARbb1nVjSCCe28Blc';
-
-$port = getenv('MYSQL_ADDON_PORT') ?: '3306';
+$host   = "bi4znbakulhrwepehasb-mysql.services.clever-cloud.com";
+$dbname = "bi4znbakulhrwepehasb";
+$user   = "urwpvypsyyfz8vr9";
+$pass   = "kqGARbb1nVjSCCe28Blc";
+$port   = 3306;
 
 
 /* =====================================================
@@ -34,17 +25,15 @@ $port = getenv('MYSQL_ADDON_PORT') ?: '3306';
 
 try {
 
-    $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";
-
     $pdo = new PDO(
-        $dsn,
+        "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4",
         $user,
         $pass,
         [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
-            PDO::ATTR_TIMEOUT             => 10
+            PDO::ATTR_TIMEOUT            => 10
         ]
     );
 
@@ -52,23 +41,7 @@ try {
 
     http_response_code(500);
 
-    die("
-        <div style='
-            font-family:Arial;
-            max-width:600px;
-            margin:50px auto;
-            padding:25px;
-            border-radius:10px;
-            background:#f8d7da;
-            color:#842029;
-            border:1px solid #f5c2c7;
-        '>
-            <h3>Erreur de connexion</h3>
-            <p>Impossible de se connecter à la base de données.</p>
-            <p>Veuillez réessayer plus tard.</p>
-        </div>
-    ");
-
+    die("Erreur de connexion à la base de données.");
 }
 
 
@@ -109,13 +82,6 @@ if ($mail === "" || $password === "") {
 
 
 /* =====================================================
-   NETTOYAGE EMAIL
-===================================================== */
-
-$mail = filter_var($mail, FILTER_SANITIZE_EMAIL);
-
-
-/* =====================================================
    RECHERCHE DU CLIENT
 ===================================================== */
 
@@ -134,9 +100,7 @@ try {
         LIMIT 1
     ");
 
-    $stmt->execute([
-        $mail
-    ]);
+    $stmt->execute([$mail]);
 
     $client = $stmt->fetch();
 
@@ -145,7 +109,6 @@ try {
     http_response_code(500);
 
     die("Erreur lors de la recherche du client.");
-
 }
 
 
@@ -157,7 +120,7 @@ if (!$client) {
 
     die("
         <script>
-            alert('Adresse e-mail ou mot de passe incorrect.');
+            alert('Utilisateur introuvable.');
             history.back();
         </script>
     ");
@@ -165,20 +128,14 @@ if (!$client) {
 
 
 /* =====================================================
-   VERIFICATION MOT DE PASSE
+   VERIFICATION DU MOT DE PASSE
 ===================================================== */
-
-/*
-   Cette partie conserve ta logique actuelle :
-   le mot de passe saisi est comparé directement
-   à la valeur enregistrée dans accesclient.
-*/
 
 if ($password !== $client["accesclient"]) {
 
     die("
         <script>
-            alert('Adresse e-mail ou mot de passe incorrect.');
+            alert('Mot de passe incorrect.');
             history.back();
         </script>
     ");
@@ -193,20 +150,17 @@ session_regenerate_id(true);
 
 
 /* =====================================================
-   CREATION DE LA SESSION
+   SESSION CLIENT
 ===================================================== */
 
 $_SESSION["codeclient"] = $client["codeclient"];
-
 $_SESSION["Nomclient"] = $client["Nomclient"];
-
 $_SESSION["telephone"] = $client["telephone"];
-
 $_SESSION["mail"] = $client["mail"];
 
 
 /* =====================================================
-   MISE A JOUR DE LA CONNEXION
+   METTRE CNX A 1
 ===================================================== */
 
 try {
@@ -224,15 +178,14 @@ try {
 } catch (PDOException $e) {
 
     /*
-       Même si la mise à jour de cnx échoue,
-       la connexion du client reste possible.
+       La connexion reste valide même si
+       la mise à jour de cnx échoue.
     */
-
 }
 
 
 /* =====================================================
-   PREPARATION DES DONNEES JAVASCRIPT
+   PREPARATION LOCALSTORAGE
 ===================================================== */
 
 $nom = json_encode(
@@ -273,35 +226,29 @@ $accesclient = json_encode(
 
 
 /* =====================================================
-   STOCKAGE LOCAL + REDIRECTION
+   LOCALSTORAGE
 ===================================================== */
 
 echo "<script>
 
-    localStorage.setItem(
-        'Nomclient',
-        {$nom}
-    );
+localStorage.setItem('Nomclient', {$nom});
 
-    localStorage.setItem(
-        'telephone',
-        {$telephone}
-    );
+localStorage.setItem('telephone', {$telephone});
 
-    localStorage.setItem(
-        'mail',
-        {$mailJS}
-    );
+localStorage.setItem('mail', {$mailJS});
 
-    localStorage.setItem(
-        'accesclient',
-        {$accesclient}
-    );
+localStorage.setItem('accesclient', {$accesclient});
 
-    window.location.replace('colisclient.php');
+
+/* =====================================================
+   REDIRECTION
+===================================================== */
+
+window.location.href = 'colisclient.php';
 
 </script>";
 
 exit;
 
 ?>
+```
