@@ -1,5 +1,13 @@
 <?php
+
 session_start();
+
+header('Content-Type: text/html; charset=utf-8');
+
+
+/* =====================================================
+   CONFIGURATION MYSQL
+===================================================== */
 
 $host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
 $dbname = "bi4znbakulhrwepehasb";
@@ -7,66 +15,167 @@ $user   = "urwpvypsyyfz8vr9";
 $pass   = "kqGARbb1nVjSCCe28Blc";
 $port   = 3306;
 
-$conn = new mysqli(
-    $host,
-    $user,
-    $pass,
-    $dbname,
-    $port
-);
 
-if ($conn->connect_error) {
+/* =====================================================
+   CONNEXION PDO
+===================================================== */
+
+try {
+
+    $pdo = new PDO(
+        "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4",
+        $user,
+        $pass,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false
+        ]
+    );
+
+} catch (PDOException $e) {
+
     die("Erreur de connexion à la base de données.");
 }
 
+
+/* =====================================================
+   CONNEXION CLIENT
+===================================================== */
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $mail = $_POST["mail"] ?? "";
-    $password = $_POST["accesclient"] ?? "";
+    $mail = trim($_POST["mail"] ?? "");
+    $password = trim($_POST["accesclient"] ?? "");
 
-    if (empty($mail) || empty($password)) {
+
+    /* =================================================
+       VALIDATION
+    ================================================= */
+
+    if ($mail === "" || $password === "") {
+
         die("Champs obligatoires manquants");
     }
 
-    // 🔎 chercher client
+
+    /* =================================================
+       RECHERCHER CLIENT
+    ================================================= */
+
     $stmt = $pdo->prepare("
-        SELECT codeclient, Nomclient, telephone, mail, accesclient, cnx
+        SELECT
+            codeclient,
+            Nomclient,
+            telephone,
+            mail,
+            accesclient,
+            cnx
         FROM client
         WHERE mail = ?
         LIMIT 1
     ");
 
-    $stmt->execute([$mail]);
-    $user = $stmt->fetch();
+    $stmt->execute([
+        $mail
+    ]);
 
-    if (!$user) {
+    $client = $stmt->fetch();
+
+
+    /* =================================================
+       CLIENT INTROUVABLE
+    ================================================= */
+
+    if (!$client) {
+
         die("Utilisateur introuvable");
     }
 
-    // 🔐 vérification mot de passe
-    if ($password !== $user["accesclient"]) {
+
+    /* =================================================
+       VERIFICATION MOT DE PASSE
+       LOGIQUE CONSERVÉE
+    ================================================= */
+
+    if ($password !== $client["accesclient"]) {
+
         die("Mot de passe incorrect");
     }
 
-    // ✅ connexion OK
-    $_SESSION["codeclient"] = $user["codeclient"];
-    $_SESSION["Nomclient"] = $user["Nomclient"];
-    $_SESSION["telephone"] = $user["telephone"];
-    $_SESSION["mail"] = $user["mail"];
 
-    // 🔄 update cnx = 1
-    $upd = $pdo->prepare("UPDATE client SET cnx = 1 WHERE codeclient = ?");
-    $upd->execute([$user["codeclient"]]);
+    /* =================================================
+       CONNEXION OK
+    ================================================= */
 
-    // 📦 envoi vers JS localStorage via session redirect
+    $_SESSION["codeclient"] = $client["codeclient"];
+    $_SESSION["Nomclient"] = $client["Nomclient"];
+    $_SESSION["telephone"] = $client["telephone"];
+    $_SESSION["mail"] = $client["mail"];
+
+
+    /* =================================================
+       UPDATE CNX
+    ================================================= */
+
+    $upd = $pdo->prepare("
+        UPDATE client
+        SET cnx = 1
+        WHERE codeclient = ?
+    ");
+
+    $upd->execute([
+        $client["codeclient"]
+    ]);
+
+
+    /* =================================================
+       LOCAL STORAGE + REDIRECTION
+    ================================================= */
+
+    $nom = json_encode(
+        $client["Nomclient"],
+        JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+    );
+
+    $telephone = json_encode(
+        $client["telephone"],
+        JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+    );
+
+    $mailJS = json_encode(
+        $client["mail"],
+        JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+    );
+
+    $accesclient = json_encode(
+        $client["accesclient"],
+        JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+    );
+
+
     echo "<script>
-        localStorage.setItem('Nomclient', '".addslashes($user["Nomclient"])."');
-        localStorage.setItem('telephone', '".addslashes($user["telephone"])."');
-        localStorage.setItem('mail', '".addslashes($user["mail"])."');
-        localStorage.setItem('accesclient', '".addslashes($user["accesclient"])."');
+
+        localStorage.setItem('Nomclient', {$nom});
+
+        localStorage.setItem('telephone', {$telephone});
+
+        localStorage.setItem('mail', {$mailJS});
+
+        localStorage.setItem('accesclient', {$accesclient});
 
         window.location.href = 'colisclient.php';
+
     </script>";
+
     exit;
 }
+
+
+/* =====================================================
+   AUCUNE REQUETE
+===================================================== */
+
+die("Requête invalide");
+
 ?>
