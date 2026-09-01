@@ -1,83 +1,158 @@
+
 <?php
 
-header('Content-Type: application/json');
+declare(strict_types=1);
+
+/*
+=========================================================
+ API CLIENT
+ Connexion MySQL Clever Cloud
+=========================================================
+*/
+
+header('Content-Type: application/json; charset=utf-8');
 
 
-$host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
-$dbname = "b9xd1ca5virznhlmzgmt";
-$user   = "usm9pm3hnlnhmoee";
-$pass   = "5un1mBwofPvYnS36hOLi";
-$port   = 20856;
+/* =====================================================
+   CONFIGURATION MYSQL
+===================================================== */
 
-$conn = new mysqli(
-    $host,
-    $user,
-    $pass,
-    $dbname,
-    $port
-);
+$host = "bi4znbakulhrwepehasb-mysql.services.clever-cloud.com";
+$dbname = "bi4znbakulhrwepehasb";
+$user = "urwpvypsyyfz8vr9";
+$pass = "kqGARbb1nVjSCCe28Blc";
+$port = 3306;
 
-if ($conn->connect_error) {
-    die("Erreur de connexion à la base de données.");
+
+/* =====================================================
+   CONNEXION PDO
+===================================================== */
+
+try {
+
+    $pdo = new PDO(
+        "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4",
+        $user,
+        $pass,
+        [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false
+        ]
+    );
+
+} catch (PDOException $e) {
+
+    http_response_code(500);
+
+    echo json_encode([
+        "error" => "Erreur de connexion à la base de données"
+    ], JSON_UNESCAPED_UNICODE);
+
+    exit;
 }
 
- 
 
-/* =========================================
-   RECHERCHE CLIENT
-========================================= */
+/* =====================================================
+   RECHERCHE CLIENT PAR TELEPHONE
+===================================================== */
 
-if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["telephone"])) {
+if (
+    $_SERVER["REQUEST_METHOD"] === "GET" &&
+    isset($_GET["telephone"])
+) {
 
-    $telephone = trim($_GET["telephone"]);
+    $telephone = trim((string) $_GET["telephone"]);
 
-    $sql = "SELECT *
+
+    if ($telephone === "") {
+
+        echo json_encode([
+            "found" => false,
+            "error" => "Numéro de téléphone obligatoire"
+        ], JSON_UNESCAPED_UNICODE);
+
+        exit;
+    }
+
+
+    try {
+
+        $sql = "
+            SELECT
+                codeclient,
+                Nomclient,
+                telephone,
+                mail,
+                accesclient
             FROM client
             WHERE telephone = ?
-            LIMIT 1";
+            LIMIT 1
+        ";
 
-    $req = $pdo->prepare($sql);
+        $req = $pdo->prepare($sql);
 
-    $req->execute([$telephone]);
-
-    $client = $req->fetch(PDO::FETCH_ASSOC);
-
-    if ($client) {
-
-        echo json_encode([
-            "found" => true,
-            "data" => [
-                "codeclient"   => $client["codeclient"],
-                "Nomclient"    => $client["Nomclient"],
-                "telephone"    => $client["telephone"],
-                "mail"         => $client["mail"],
-                "accesclient"  => $client["accesclient"]
-            ]
+        $req->execute([
+            $telephone
         ]);
 
-    } else {
+        $client = $req->fetch();
+
+
+        if ($client) {
+
+            echo json_encode([
+                "found" => true,
+                "data" => [
+                    "codeclient"  => $client["codeclient"],
+                    "Nomclient"   => $client["Nomclient"],
+                    "telephone"   => $client["telephone"],
+                    "mail"        => $client["mail"],
+                    "accesclient" => $client["accesclient"]
+                ]
+            ], JSON_UNESCAPED_UNICODE);
+
+        } else {
+
+            echo json_encode([
+                "found" => false
+            ], JSON_UNESCAPED_UNICODE);
+        }
+
+    } catch (PDOException $e) {
+
+        http_response_code(500);
 
         echo json_encode([
-            "found" => false
-        ]);
+            "error" => "Erreur lors de la recherche du client"
+        ], JSON_UNESCAPED_UNICODE);
     }
 
     exit;
 }
 
-/* =========================================
-   AJOUT / MODIFICATION
-========================================= */
+
+/* =====================================================
+   AJOUT / MODIFICATION CLIENT
+===================================================== */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $codeclient  = trim($_POST["codeclient"] ?? "");
-    $Nomclient   = trim($_POST["Nomclient"] ?? "");
-    $telephone   = trim($_POST["telephone"] ?? "");
-    $mail        = trim($_POST["mail"] ?? "");
-    $accesclient = trim($_POST["accesclient"] ?? "");
 
-    /* VALIDATION */
+    /* =================================================
+       RECUPERATION DES DONNEES
+    ================================================= */
+
+    $codeclient = trim((string) ($_POST["codeclient"] ?? ""));
+    $Nomclient = trim((string) ($_POST["Nomclient"] ?? ""));
+    $telephone = trim((string) ($_POST["telephone"] ?? ""));
+    $mail = trim((string) ($_POST["mail"] ?? ""));
+    $accesclient = trim((string) ($_POST["accesclient"] ?? ""));
+
+
+    /* =================================================
+       VALIDATION
+    ================================================= */
 
     if (
         $Nomclient === "" ||
@@ -88,96 +163,191 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         echo json_encode([
             "error" => "Tous les champs sont obligatoires"
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
 
         exit;
     }
 
-    /* =====================================
-       MODIFICATION
-    ===================================== */
 
-    if ($codeclient !== "") {
+    try {
 
-        $sql = "UPDATE client SET
 
-                    Nomclient   = ?,
-                    telephone   = ?,
-                    mail        = ?,
+        /* =============================================
+           MODIFICATION
+        ============================================= */
+
+        if ($codeclient !== "") {
+
+            /* Vérifier que le client existe */
+
+            $check = $pdo->prepare("
+                SELECT codeclient
+                FROM client
+                WHERE codeclient = ?
+                LIMIT 1
+            ");
+
+            $check->execute([
+                $codeclient
+            ]);
+
+            if (!$check->fetch()) {
+
+                echo json_encode([
+                    "error" => "Client introuvable"
+                ], JSON_UNESCAPED_UNICODE);
+
+                exit;
+            }
+
+
+            /* Vérifier si le téléphone appartient
+               à un autre client */
+
+            $checkTelephone = $pdo->prepare("
+                SELECT codeclient
+                FROM client
+                WHERE telephone = ?
+                AND codeclient <> ?
+                LIMIT 1
+            ");
+
+            $checkTelephone->execute([
+                $telephone,
+                $codeclient
+            ]);
+
+            if ($checkTelephone->fetch()) {
+
+                echo json_encode([
+                    "error" => "Ce numéro existe déjà pour un autre client"
+                ], JSON_UNESCAPED_UNICODE);
+
+                exit;
+            }
+
+
+            /* Mise à jour */
+
+            $sql = "
+                UPDATE client SET
+
+                    Nomclient = ?,
+                    telephone = ?,
+                    mail = ?,
                     accesclient = ?
 
-                WHERE codeclient = ?";
+                WHERE codeclient = ?
+            ";
 
-        $req = $pdo->prepare($sql);
+            $req = $pdo->prepare($sql);
 
-        $req->execute([
+            $req->execute([
+                $Nomclient,
+                $telephone,
+                $mail,
+                $accesclient,
+                $codeclient
+            ]);
+
+
+            echo json_encode([
+                "success" => true,
+                "message" => "Compte modifié avec succès",
+                "codeclient" => $codeclient
+            ], JSON_UNESCAPED_UNICODE);
+
+            exit;
+        }
+
+
+        /* =============================================
+           CREATION D'UN NOUVEAU CLIENT
+        ============================================= */
+
+
+        /* Vérifier si le téléphone existe déjà */
+
+        $check = $pdo->prepare("
+            SELECT codeclient
+            FROM client
+            WHERE telephone = ?
+            LIMIT 1
+        ");
+
+        $check->execute([
+            $telephone
+        ]);
+
+        if ($check->fetch()) {
+
+            echo json_encode([
+                "error" => "Ce numéro existe déjà"
+            ], JSON_UNESCAPED_UNICODE);
+
+            exit;
+        }
+
+
+        /* =============================================
+           INSERTION
+        ============================================= */
+
+        $insert = $pdo->prepare("
+            INSERT INTO client (
+                Nomclient,
+                telephone,
+                mail,
+                accesclient
+            )
+            VALUES (?, ?, ?, ?)
+        ");
+
+        $insert->execute([
             $Nomclient,
             $telephone,
             $mail,
-            $accesclient,
-            $codeclient
+            $accesclient
         ]);
 
+
+        /* Récupérer le code client généré */
+
+        $nouveauCodeClient = $pdo->lastInsertId();
+
+
         echo json_encode([
-            "message" => "Compte modifié avec succès"
-        ]);
+            "success" => true,
+            "message" => "Compte créé avec succès",
+            "codeclient" => $nouveauCodeClient
+        ], JSON_UNESCAPED_UNICODE);
+
+        exit;
+
+
+    } catch (PDOException $e) {
+
+        http_response_code(500);
+
+        echo json_encode([
+            "error" => "Erreur lors de l'enregistrement du client"
+        ], JSON_UNESCAPED_UNICODE);
 
         exit;
     }
-
-    /* =====================================
-       CREATION
-    ===================================== */
-
-    $check = $pdo->prepare("
-        SELECT codeclient
-        FROM client
-        WHERE telephone = ?
-    ");
-
-    $check->execute([$telephone]);
-
-    if ($check->fetch()) {
-
-        echo json_encode([
-            "error" => "Ce numéro existe déjà"
-        ]);
-
-        exit;
-    }
-
-    $insert = $pdo->prepare("
-
-        INSERT INTO client (
-
-            Nomclient,
-            telephone,
-            mail,
-            accesclient
-
-        ) VALUES (?,?,?,?)
-
-    ");
-
-    $insert->execute([
-        $Nomclient,
-        $telephone,
-        $mail,
-        $accesclient
-    ]);
-
-    echo json_encode([
-        "message" => "Compte créé avec succès"
-    ]);
-
-    exit;
 }
 
-/* =========================================
-   SI AUCUNE REQUETE VALIDE
-========================================= */
+
+/* =====================================================
+   AUCUNE REQUETE VALIDE
+===================================================== */
+
+http_response_code(400);
 
 echo json_encode([
     "error" => "Requête invalide"
-]);
+], JSON_UNESCAPED_UNICODE);
+
+exit;
+
 ?>
