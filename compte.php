@@ -2,24 +2,26 @@
 
 header('Content-Type: application/json');
 
-try {
 
-     $pdo = new PDO(
-        "mysql:host=bi4znbakulhrwepehasb-mysql.services.clever-cloud.com;dbname=b9xd1ca5virznhlmzgmt;port=20856;charset=utf8",
-        "5un1mBwofPvYnS36hOLi",
-        "usm9pm3hnlnhmoee"
-    );
+$host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
+$dbname = "b9xd1ca5virznhlmzgmt";
+$user   = "usm9pm3hnlnhmoee";
+$pass   = "5un1mBwofPvYnS36hOLi";
+$port   = 20856;
 
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$conn = new mysqli(
+    $host,
+    $user,
+    $pass,
+    $dbname,
+    $port
+);
 
-} catch (PDOException $e) {
-
-    echo json_encode([
-        "error" => "Connexion base impossible"
-    ]);
-
-    exit;
+if ($conn->connect_error) {
+    die("Erreur de connexion à la base de données.");
 }
+
+ 
 
 /* =========================================
    RECHERCHE CLIENT
