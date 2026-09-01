@@ -2,10 +2,10 @@
 session_start();
 
 $host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
-$dbname = "b9xd1ca5virznhlmzgmt";
-$user   = "usm9pm3hnlnhmoee";
-$pass   = "5un1mBwofPvYnS36hOLi";
-$port   = 20856;
+$dbname = "bi4znbakulhrwepehasb";
+$user   = "urwpvypsyyfz8vr9";
+$pass   = "kqGARbb1nVjSCCe28Blc";
+$port   = 3306;
 
 $conn = new mysqli(
     $host,
