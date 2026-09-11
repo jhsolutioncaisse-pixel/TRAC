@@ -20,11 +20,11 @@ if (!isset($_SESSION['codeclient'])) {
    ON NE CHANGE PAS CETTE BASE
 ===================================================== */
 
-$host   = "b9xd1ca5virznhlmzgmt-mysql.services.clever-cloud.com";
-$dbname = "b9xd1ca5virznhlmzgmt";
-$user   = "usm9pm3hnlnhmoee";
-$pass   = "5un1mBwofPvYnS36hOLi";
-$port   = 20856;
+$host   = "localhost";
+$dbname = "u728826376_BATEAUJH";
+$user   = "u728826376_nzobazolahenoc";
+$pass   = "Henoc@2001";
+$port   = 3306;
 
 
 try {
