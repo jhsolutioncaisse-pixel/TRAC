@@ -4,7 +4,7 @@
 // CONNEXION BASE DE DONNEES - CLEVER CLOUD
 // =========================================================
 
-$host   = "localhost";
+$host   = "%";
 $dbname = "u728826376_BATEAUJH";
 $user   = "u728826376_nzobazolahenoc";
 $pass   = "Henoc@2001";
