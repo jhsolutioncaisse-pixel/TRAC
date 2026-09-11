@@ -20,7 +20,7 @@ if (!isset($_SESSION['codeclient'])) {
    ON NE CHANGE PAS CETTE BASE
 ===================================================== */
 
-$host   = "%";
+$host   = "77.37.35.86";
 $dbname = "u728826376_BATEAUJH";
 $user   = "u728826376_nzobazolahenoc";
 $pass   = "Henoc@2001";
